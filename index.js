@@ -1,9 +1,29 @@
-var express = require('express')
-var app = express()
-require('dotenv').config({path: __dirname + '/.env'})
-require('./mongo')
+const express = require('express');
+require('dotenv').config({ path: `${__dirname}/.env` });
+const mongoose = require('mongoose');
+const rateLimit = require('express-rate-limit');
+const routes = require('./src/router');
+
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 
 const PORT = process.env.PORT || 3000;
+class App {
+  constructor() {
+    this.express = express();
+    mongoose.connect('mongodb://mongodb:27017/blog', { useNewUrlParser: true, useUnifiedTopology: true });
+    this.middlewares();
+    this.routes();
+    this.express.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  }
 
-app.get('/', function (req, res) { res.send('hello world')})
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  middlewares() {
+    this.express.use(express.json());
+  }
+
+  routes() {
+    this.express.use(limiter);
+    this.express.use(routes);
+  }
+}
+
+module.exports = new App().express;
