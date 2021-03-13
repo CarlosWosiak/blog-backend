@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo:4.2
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+      - MONGODB_USER=root
+      - MONGODB_PASS=null
+    volumes:
+      - ./data/db/mongodb:/data/db
+    ports:
+      - 27065:27017
+    networks:
+      - blog
+
+  node:
+    depends_on:
+      - mongodb
+    command: "npm run dev"
+    networks:
+      - blog
+
+networks:
+  blog:

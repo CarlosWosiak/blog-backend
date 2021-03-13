@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  node:
+    image: node:lts
+    container_name: blog-node
+    working_dir: /app
+    tty: true
+    ports:
+      - "6005:6005"
+    volumes:
+      - "../:/app"
+    command: "npm start"
