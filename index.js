@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config({ path: `${__dirname}/.env` });
 const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit');
+const cors = require('cors');
 const routes = require('./src/router');
 
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
@@ -17,6 +18,7 @@ class App {
   }
 
   middlewares() {
+    this.express.use(cors());
     this.express.use(express.json());
   }
 
